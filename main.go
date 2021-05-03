@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"syscall"
 
 	"github.com/ProtonMail/gopenpgp/v2/helper"
 	"github.com/iotaledger/iota.go/guards/validators"
 	"github.com/iotaledger/iota.go/v2/bech32"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 const recoveryPubkey = `-----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -88,7 +86,11 @@ func main() {
 		if armor, err := helper.EncryptMessageArmored(recoveryPubkey, message); err != nil {
 			fmt.Printf("ERROR: failed to encrypt message: %s\n", err)
 		} else {
-			fmt.Printf("\n\n++++++++++\nSend the following text to our community managers:\n\n\n\n%s\n++++++++++\n", armor)
+			fmt.Printf("\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##\n##")
+			fmt.Println("\n\n=================================CUT HERE=====================================\n")
+			fmt.Println("Send __only__ the following text to our community managers (via Discord or Email)")
+			fmt.Printf("\n\n\n%s\n\n", armor)
+			fmt.Println("\n\n==============================================================================\n")
 		}
 	}
 	fmt.Println("Press ENTER to exit...")
@@ -111,16 +113,12 @@ func input(reader *bufio.Reader) (string, string, string, error) {
 		return "", "", "", err
 	}
 
-	fmt.Print("Enter Seed for address (hidden): ")
-	byteSeed, err := terminal.ReadPassword(int(syscall.Stdin))
-	fmt.Print("\n\n")
+	fmt.Print("Enter Seed for address: ")
+	seed, err := reader.ReadString('\n')
+	seed = strings.Replace(seed, "\n", "", -1)
 	if err != nil {
 		return "", "", "", err
 	}
-	seed := string(byteSeed)
-	seed = strings.Replace(seed, "\n", "", -1)
-
-	fmt.Printf("Submitted seed: %s\n", seed)
 
 	if err := validators.ValidateAddresses(true, address)(); err != nil {
 		err := fmt.Errorf("The entered Claimed address is invalid:\n%w", err)
