@@ -1,4 +1,4 @@
-module github.com/karimodm/iota-reclaim-simplified/v2
+module github.com/iotaledger/iota-reclaim-simplified/v2
 
 go 1.15
 
