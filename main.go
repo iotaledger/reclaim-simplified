@@ -102,6 +102,8 @@ func input(reader *bufio.Reader) (string, string, string, error) {
 	fmt.Print("Enter Claimed address including checksum: ")
 	address, err := reader.ReadString('\n')
 	address = strings.Replace(address, "\n", "", -1)
+	address = strings.Replace(address, "\r", "", -1)
+	address = strings.ToUpper(address)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -109,6 +111,8 @@ func input(reader *bufio.Reader) (string, string, string, error) {
 	fmt.Print("Enter Bech32 Payout address (including `iota` prefix): ")
 	payout, err := reader.ReadString('\n')
 	payout = strings.Replace(payout, "\n", "", -1)
+	payout = strings.Replace(payout, "\r", "", -1)
+	payout = strings.ToUpper(payout)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -116,8 +120,15 @@ func input(reader *bufio.Reader) (string, string, string, error) {
 	fmt.Print("Enter Seed for address: ")
 	seed, err := reader.ReadString('\n')
 	seed = strings.Replace(seed, "\n", "", -1)
+	seed = strings.Replace(seed, "\r", "", -1)
+	seed = strings.ToUpper(seed)
 	if err != nil {
 		return "", "", "", err
+	}
+	if len(seed) < 81 {
+		missing_padding := 81 - len(seed)
+		padding := strings.Repeat("9", missing_padding)
+		seed = seed + padding
 	}
 
 	if err := validators.ValidateAddresses(true, address)(); err != nil {
