@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ProtonMail/gopenpgp/v2/helper"
+	"github.com/iotaledger/iota.go/guards"
 	"github.com/iotaledger/iota.go/guards/validators"
 	"github.com/iotaledger/iota.go/v2/bech32"
 )
@@ -99,7 +100,7 @@ func main() {
 
 func input(reader *bufio.Reader) (string, string, string, error) {
 
-	fmt.Print("Enter Claimed address including checksum: ")
+	fmt.Print("Enter Claimed address (with or without checksum): ")
 	address, err := reader.ReadString('\n')
 	address = strings.Replace(address, "\n", "", -1)
 	address = strings.Replace(address, "\r", "", -1)
@@ -131,8 +132,8 @@ func input(reader *bufio.Reader) (string, string, string, error) {
 		seed = seed + padding
 	}
 
-	if err := validators.ValidateAddresses(true, address)(); err != nil {
-		err := fmt.Errorf("The entered Claimed address is invalid:\n%w", err)
+	if !guards.IsHash(address) {
+		err := fmt.Errorf("The entered Claimed address is invalid")
 		return "", "", "", err
 	}
 
